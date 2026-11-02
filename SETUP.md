@@ -2,13 +2,13 @@
 
 The profile is designed for **Qingyang-Lucas-Fang**. All artwork is stored in this folder; the README has no required badge, chart, font, or animation service.
 
-1. Create a **public** GitHub repository named **`Qingyang-Lucas-Fang`** under your own account. GitHub displays that repository’s root README on your personal profile.
-2. Extract **`lucas-github-profile.zip`**, then upload its **`README.md`**, **`assets/`**, **`scripts/`**, and **`.github/`** to the repository root. Keep their relative paths intact. Uploading only the README will leave the artwork missing. The local `preview/` folder and this setup guide are optional.
-3. Open **Actions → Refresh profile statistics → Run workflow** to refresh the included statistics. The workflow also runs daily at **11:23 Asia/Shanghai (03:23 UTC)** and when its script or workflow is first pushed to `main` or `master`.
+1. This repository is already connected to the **`Qingyang-Lucas-Fang`** profile repository. GitHub displays its root README on your personal profile.
+2. Keep the README, assets, stats script, and workflow together at the repository root. The local `preview/` folder and this setup guide are optional.
+3. Open **Actions → Refresh profile statistics → Run workflow** to refresh the statistics immediately. Scheduled refreshes run at 00:17, 06:17, 12:17, and 18:17 UTC (08:17, 14:17, 20:17, and 02:17 Asia/Shanghai).
 
-The workflow uses GitHub’s built-in token; **no personal access token is required**. It needs permission to commit the two generated SVGs. If repository or organization settings deny writes or the default branch requires pull requests, the commit step will fail; allow the intended bot update through the repository’s existing rules or refresh and commit the SVGs manually. GitHub can delay scheduled runs and can disable them after prolonged repository inactivity.
+The workflow runs every six hours and on manual dispatch. It uses GitHub’s built-in token; **no personal access token is required**. It commits both generated SVGs and rotates the image URL in the README so GitHub fetches the latest image. Repository settings must allow Actions to write contents. Scheduled runs can be delayed; use **Actions → Refresh profile statistics → Run workflow** to refresh immediately.
 
-The README package uses exactly five artwork files: `hero.svg`, `openassembler.svg`, `grand-tool.svg`, `activity-dark.svg`, and `activity-light.svg`. Other website files that share your working folder are not required for this profile.
+The README uses the five artwork files `hero.svg`, `openassembler.svg`, `grand-tool.svg`, `activity-dark.svg`, and `activity-light.svg`.
 
 ## Preview before publishing
 

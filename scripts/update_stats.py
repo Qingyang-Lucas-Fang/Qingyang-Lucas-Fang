@@ -10,6 +10,7 @@ from datetime import date, datetime, timedelta, timezone
 from html import escape
 from html.parser import HTMLParser
 from pathlib import Path
+from time import sleep
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -28,8 +29,20 @@ def read_url(url, payload=None):
     if payload is not None:
         data = json.dumps(payload).encode()
         headers["Content-Type"] = "application/json"
-    with urlopen(Request(url, data=data, headers=headers), timeout=40) as response:
-        return response.read().decode("utf-8")
+    for attempt in range(4):
+        try:
+            with urlopen(Request(url, data=data, headers=headers), timeout=40) as response:
+                return response.read().decode("utf-8")
+        except HTTPError as error:
+            if error.code not in {429, 500, 502, 503, 504} or attempt == 3:
+                raise
+            wait = min(int(error.headers.get("Retry-After", 2 ** (attempt + 1))), 30)
+        except (URLError, TimeoutError):
+            if attempt == 3:
+                raise
+            wait = 2 ** (attempt + 1)
+        sleep(wait)
+    raise RuntimeError("GitHub request retry limit exceeded")
 
 
 def api(path):
@@ -210,15 +223,31 @@ def main():
     languages = Counter()
     for repo in repos:
         languages.update(api(f'/repos/{OWNER}/{repo["name"]}/languages'))
-    data = {"repo_count": len(repos), "stars": sum(r["stargazers_count"] for r in repos), "followers": user["followers"], "languages": dict(languages), "calendar": contributions(OWNER), "updated": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")}
+    now = datetime.now(timezone.utc)
+    data = {"repo_count": len(repos), "stars": sum(r["stargazers_count"] for r in repos), "followers": user["followers"], "languages": dict(languages), "calendar": contributions(OWNER), "updated": now.strftime("%Y-%m-%d %H:%M UTC")}
     # Complete all network reads and renders before replacing the checked-in panels.
     rendered = {name: render(data, dark) for name, dark in [("activity-dark.svg", True), ("activity-light.svg", False)]}
     output = ROOT / "assets"
     output.mkdir(exist_ok=True)
+    readme_path = ROOT / "README.md"
+    readme = readme_path.read_text(encoding="utf-8")
+    # GitHub caches Markdown images by source URL. Rotate a query key with every
+    # refresh so it fetches the newly rendered SVG instead of a stale proxy copy.
+    cache_key = now.strftime("%Y%m%dT%H%M%SZ")
+    readme, replacements = re.subn(
+        r'(\./assets/activity-(?:dark|light)\.svg)(?:\?refresh=[A-Za-z0-9TZ]+)?',
+        lambda match: f"{match.group(1)}?refresh={cache_key}",
+        readme,
+    )
+    if replacements != 3:
+        raise ValueError(f"Expected 3 activity-image URLs in README, found {replacements}")
+    readme_tmp = readme_path.with_name(readme_path.name + ".tmp")
+    readme_tmp.write_text(readme, encoding="utf-8")
     for name, content in rendered.items():
         temporary = output / (name + ".tmp")
         temporary.write_text(content, encoding="utf-8")
         temporary.replace(output / name)
+    readme_tmp.replace(readme_path)
     print(json.dumps({k: v for k, v in data.items() if k != "calendar"}, indent=2))
     print("Contribution calendar:", f'{data["calendar"]["total"]:,} contributions' if data["calendar"] else "unavailable")
 
