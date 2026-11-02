@@ -6,7 +6,7 @@ The profile is designed for **Qingyang-Lucas-Fang**. All artwork is stored in th
 2. Keep the README, assets, stats script, and workflow together at the repository root. The local `preview/` folder and this setup guide are optional.
 3. Open **Actions → Refresh profile statistics → Run workflow** to refresh the statistics immediately. Scheduled refreshes run at 00:17, 06:17, 12:17, and 18:17 UTC (08:17, 14:17, 20:17, and 02:17 Asia/Shanghai).
 
-The workflow runs every six hours and on manual dispatch. It uses GitHub’s built-in token; **no personal access token is required**. It commits both generated SVGs and rotates the image URL in the README so GitHub fetches the latest image. Repository settings must allow Actions to write contents. Scheduled runs can be delayed; use **Actions → Refresh profile statistics → Run workflow** to refresh immediately.
+The workflow runs every six hours and on manual dispatch. It uses GitHub’s built-in token; **no personal access token is required**. It refreshes both SVGs and rotates the cache key in the README and local preview so GitHub and the preview fetch the latest image. Repository settings must allow Actions to write contents. Scheduled runs can be delayed; use **Actions → Refresh profile statistics → Run workflow** to refresh immediately.
 
 The README uses the five artwork files `hero.svg`, `openassembler.svg`, `grand-tool.svg`, `activity-dark.svg`, and `activity-light.svg`.
 

@@ -243,11 +243,26 @@ def main():
         raise ValueError(f"Expected 3 activity-image URLs in README, found {replacements}")
     readme_tmp = readme_path.with_name(readme_path.name + ".tmp")
     readme_tmp.write_text(readme, encoding="utf-8")
+    preview_path = ROOT / "preview" / "index.html"
+    preview_tmp = None
+    if preview_path.exists():
+        preview = preview_path.read_text(encoding="utf-8")
+        preview, preview_replacements = re.subn(
+            r'(\.\./assets/activity-(?:dark|light)\.svg)(?:\?refresh=[A-Za-z0-9TZ]+)?',
+            lambda match: f"{match.group(1)}?refresh={cache_key}",
+            preview,
+        )
+        if preview_replacements != 3:
+            raise ValueError(f"Expected 3 activity-image URLs in preview, found {preview_replacements}")
+        preview_tmp = preview_path.with_name(preview_path.name + ".tmp")
+        preview_tmp.write_text(preview, encoding="utf-8")
     for name, content in rendered.items():
         temporary = output / (name + ".tmp")
         temporary.write_text(content, encoding="utf-8")
         temporary.replace(output / name)
     readme_tmp.replace(readme_path)
+    if preview_tmp:
+        preview_tmp.replace(preview_path)
     print(json.dumps({k: v for k, v in data.items() if k != "calendar"}, indent=2))
     print("Contribution calendar:", f'{data["calendar"]["total"]:,} contributions' if data["calendar"] else "unavailable")
 
