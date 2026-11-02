@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+output/
+.playwright-cli/
+_site/
+.env
+.env.*
+!.env.example
