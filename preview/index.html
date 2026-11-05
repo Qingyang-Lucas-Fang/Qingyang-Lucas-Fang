@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -7,8 +7,10 @@
   <link rel="icon" type="image/svg+xml" href="../assets/hero.svg">
   <title>Lucas Fang · GitHub profile preview</title>
   <style>
-    :root { --page:#0b1117; --surface:#101820; --text:#dce4e9; --muted:#9baeb9; --line:#293943; --link:#9bf0cd; --subtle:#17252e; }
-    :root[data-theme="light"] { --page:#f2f3f0; --surface:#fff; --text:#283740; --muted:#65747d; --line:#d8dfda; --link:#206b54; --subtle:#f3f5f2; }
+    :root { --page:#f4f3fb; --surface:#fffefa; --text:#29283b; --muted:#66677f; --line:#deddec; --link:#6b5db8; --subtle:#f1effa; }
+    :root[data-theme="dark"] { --page:#1b1b29; --surface:#242435; --text:#f5f3ff; --muted:#b9b8d0; --line:#3d3c52; --link:#c4b7ff; --subtle:#302f45; }
+    :root[data-theme="light"] { color-scheme:light; }
+    :root[data-theme="dark"] { color-scheme:dark; }
     * { box-sizing:border-box; }
     html { scroll-behavior:smooth; scroll-padding-top:90px; }
     body { margin:0; background:var(--page); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:15px; }
@@ -69,8 +71,8 @@
     <div class="toolbar-inner">
       <div class="brand"><strong>LF / PROFILE</strong><span class="secondary"> &nbsp; · &nbsp; local GitHub README preview</span></div>
       <div class="controls" role="group" aria-label="Preview color theme">
-        <button id="light" type="button" aria-pressed="false">Light</button>
-        <button id="dark" type="button" aria-pressed="true">Dark</button>
+        <button id="light" type="button" aria-pressed="true">Light</button>
+        <button id="dark" type="button" aria-pressed="false">Dark</button>
       </div>
     </div>
   </header>
@@ -93,7 +95,7 @@
 </p>
 <hr/>
 <p>I build across the stack: from <strong>GPU instruction encoding and compiler backends</strong> to <strong>AI workflows people can actually use</strong>. My work connects hardware behavior, mathematical reasoning, and software systems through measurement and working implementations.</p>
-<p>My current focus is <strong>OpenAssembler</strong>: exploring the path from PTX to NVIDIA machine code, and what becomes possible when the compiler understands the hardware underneath it.</p>
+<p>My current focus is <strong>OpenAssembler v0.2.0</strong>: extending an SM80 compiler and emulator into native FP16/BF16 tensor GEMM and a configured PyTorch integration path.</p>
 <table>
 <thead>
 <tr>
@@ -106,7 +108,7 @@
 <tr>
 <td style="text-align:left">PTX / SASS · NVIDIA Ampere</td>
 <td style="text-align:left">Python · CUDA C/C++ frontends</td>
-<td style="text-align:left">AI workflow orchestration</td>
+<td style="text-align:left">AI workflow orchestration · PyTorch integration</td>
 </tr>
 <tr>
 <td style="text-align:left">Instruction encoding · Scheduling</td>
@@ -126,15 +128,15 @@
 <p><strong>Understanding the machine. Building the compiler.</strong></p>
 <p>
 <a href="https://github.com/Qingyang-Lucas-Fang/OpenAssembler">
-<img alt="OpenAssembler: Python, CUDA C/C++ or PTX through a custom compiler backend to SASS on NVIDIA Ampere. Reported results: 1.36× speedup on the div7 loop benchmark, 110 of 110 compiler probes bit-exact on A100, and 97 exactly verified matrix-multiplication factorizations." src="../assets/openassembler.svg" width="100%"/>
+<img alt="OpenAssembler v0.2.0: a custom NVIDIA SM80 compiler and emulator with native FP16/BF16 full-tile tensor GEMM and a configured PyTorch graph-capture workflow. Reported 16–27% GEMM improvement is against the prior direct schedule, not end-to-end training." src="../assets/openassembler.svg" width="100%"/>
 </a>
 </p>
-<p>A PTX-to-SASS compiler backend, instruction encoder/decoder, and GPU emulator for <strong>NVIDIA Ampere (<code>sm_80</code>)</strong>. Built through black-box observation of NVIDIA’s toolchain and validated against real A100 behavior.</p>
-<p>The interesting part is the connection between layers: <strong>hardware-measured instruction latencies inform scheduling</strong>, register allocation shapes the generated code, and emulation checks the result before execution on a GPU.</p>
-<p><strong><a href="https://github.com/Qingyang-Lucas-Fang/OpenAssembler">Explore the repository ↗</a></strong>   ·   <a href="https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/docs/STATUS.md">Measured results</a>   ·   <a href="https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/REPRODUCING.md">Reproduction guide</a></p>
+<p>OpenAssembler combines a PTX-to-SASS compiler backend, instruction encoder/decoder, and GPU emulator for <strong>NVIDIA Ampere (<code>sm_80</code>)</strong>. Version <strong>0.2.0</strong> adds a native FP16/BF16 tensor-core GEMM path for full tiles, using a specialized schedule that integrates with the project's SASS tooling.</p>
+<p>A configured PyTorch workflow demonstrates the extension on a selected transformer with CUDA graph capture. The project's reviewed report says the tuned GEMM is <strong>16–27% faster than its previous direct schedule</strong> on tested shapes and reaches <strong>80–99% of matched cuBLAS throughput</strong>. These are GEMM-level, project-reported comparisons, not end-to-end training speedups or broad model benchmarks. The integration is explicitly configured; it does not automatically replace every model GEMM.</p>
+<p><strong><a href="https://github.com/Qingyang-Lucas-Fang/OpenAssembler">Explore the repository ↗</a></strong>   ·   <a href="https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/docs/TENSOR_GEMM.md">Tensor GEMM details</a>   ·   <a href="https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/docs/INTEGRATION_REVIEW.md">Integration review</a>   ·   <a href="https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/REPRODUCING.md">Reproduction guide</a></p>
 <details>
 <summary><b>Open the engineering deep dive — architecture, evidence, and scope</b></summary>
-<h4>What I built</h4>
+<h4>Compiler core and tensor-GEMM extension</h4>
 <ul>
 <li><strong>A custom compiler backend:</strong> instruction selection, dead-code elimination, coalescing, linear-scan register allocation, basic-block scheduling, and optional 4× loop unrolling.</li>
 <li><strong>An Ampere SASS encoder/decoder:</strong> instruction encodings, operands, control fields, and scheduling metadata.</li>
@@ -142,8 +144,12 @@
 <li><strong>Constant division and remainder lowering:</strong> multiply-high sequences with Z3-backed equivalence checks.</li>
 <li><strong>A fast matrix-multiplication path:</strong> Strassen / AlphaTensor factorizations verified exactly over the rationals and compiled through the backend.</li>
 <li><strong>Multiple entry points:</strong> a small Python kernel subset, PTX, and CUDA C/C++ through <code>nvcc</code>’s PTX frontend, plus an interactive CLI.</li>
+<li><strong>Version 0.2.0 tensor GEMM:</strong> a native SM80 tensor-core path for FP16/BF16 matrix multiplication, specialized for supported full-tile inputs.</li>
+<li><strong>PyTorch integration:</strong> a configured application workflow routes supported GEMM calls through the extension and uses CUDA graph capture for replay; it is a separate integration layer, not automatic compiler-wide substitution.</li>
 </ul>
-<h4>Selected reported measurements</h4>
+<p>The integration review reports 16–27% lower GEMM time than the previous direct schedule on tested shapes and 80–99% of matched cuBLAS throughput. The selected-transformer path is an integration check, not a reported end-to-end training speedup.</p>
+<h4>Earlier compiler benchmark snapshot</h4>
+<p>The following A100 measurements describe the compiler/probe snapshot documented on 2 November 2026. They are separate from the v0.2.0 tensor-GEMM comparisons above and do not measure end-to-end PyTorch training.</p>
 <table>
 <thead>
 <tr>
@@ -180,8 +186,8 @@
 </tr>
 </tbody>
 </table>
-<p>These are <strong>project-reported results for specific workloads</strong>, documented in the <a href="https://github.com/Qingyang-Lucas-Fang/OpenAssembler#results">repository’s results and methodology</a>. The 203-probe compilation coverage is larger than the 110-probe hardware-validated subset. Tight dependent chains remain slower than <code>ptxas</code>; the reported fast-matmul results do not beat cuBLAS.</p>
-<p><strong>Current scope:</strong> the encoder and latency model target <code>sm_80</code>. The backend still uses a <code>ptxas</code>-generated ELF container; it is a partial PTX compiler with <a href="https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/docs/FRONTENDS.md">documented frontend and instruction limits</a>.</p>
+<p>These are <strong>project-reported results for specific workloads</strong>, documented in the repository's benchmark notes. The 203-probe compilation coverage is larger than the 110-probe hardware-validated subset. Tight dependent chains remain slower than <code>ptxas</code>; the earlier fast-matmul results do not beat cuBLAS. They are retained as a dated baseline, not presented as measurements of v0.2.0's specialized tensor-GEMM path.</p>
+<p><strong>Current scope:</strong> the SASS encoder and latency model target <code>sm_80</code>. The general backend remains a partial PTX compiler with documented frontend and instruction limits; its compatible ELF packaging still uses a <code>ptxas</code>-generated container. The tensor-GEMM path has narrower shape and tile requirements and should not be read as support for arbitrary PyTorch models or GPUs.</p>
 <details>
 <summary>See the actual CLI</summary>
 <p><img alt="OpenAssembler CLI screenshot from the project" src="https://raw.githubusercontent.com/Qingyang-Lucas-Fang/OpenAssembler/main/figs/OpenAssembler_CLI.png"/></p>
@@ -300,9 +306,9 @@ Worked on peer-to-peer decentralized learning, convergence analysis, and network
 <p>
 <a href="https://github.com/Qingyang-Lucas-Fang?tab=overview">
 <picture>
-<source media="(prefers-color-scheme: dark)" srcset="../assets/activity-dark.svg?refresh=20261102T112033Z"/>
-<source media="(prefers-color-scheme: light)" srcset="../assets/activity-light.svg?refresh=20261102T112033Z"/>
-<img alt="Lucas Fang’s public GitHub activity: original public repositories, stars, followers, contribution calendar, and repository language distribution. Values and update time are shown in the panel." src="../assets/activity-light.svg?refresh=20261102T112033Z" width="100%"/>
+<source media="(prefers-color-scheme: dark)" srcset="../assets/activity-dark.svg?refresh=20261105T104300Z"/>
+<source media="(prefers-color-scheme: light)" srcset="../assets/activity-light.svg?refresh=20261105T104300Z"/>
+<img alt="Lucas Fang’s public GitHub activity: original public repositories, stars, followers, contribution calendar, and repository language distribution. Values and update time are shown in the panel." src="../assets/activity-light.svg?refresh=20261105T104300Z" width="100%"/>
 </picture>
 </a>
 </p>
@@ -324,7 +330,7 @@ Worked on peer-to-peer decentralized learning, convergence analysis, and network
     }
     document.getElementById('light').addEventListener('click', () => setTheme('light'));
     document.getElementById('dark').addEventListener('click', () => setTheme('dark'));
-    setTheme('dark');
+    setTheme('light');
   </script>
 </body>
 </html>

@@ -17,7 +17,7 @@ from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parents[1]
 OWNER = os.environ.get("PROFILE_OWNER", "Qingyang-Lucas-Fang")
 TOKEN = os.environ.get("GH_TOKEN", "")
-LANGUAGE_COLORS = {"Python": "#63CBA7", "Jupyter Notebook": "#F5AE8E", "TypeScript": "#79A9E9", "JavaScript": "#D5C76E", "HTML": "#E38E77", "CSS": "#A6A0E5", "C++": "#C889B2", "C": "#8EA5B4", "Shell": "#AFCB89", "Other": "#87939E"}
+LANGUAGE_COLORS = {"Python": "#7C72CF", "Jupyter Notebook": "#E3B94F", "TypeScript": "#559FC4", "JavaScript": "#D77968", "HTML": "#8E83D5", "CSS": "#74B4CC", "C++": "#CC83A2", "C": "#71849E", "Shell": "#A8A2D8", "Other": "#9B9CAD"}
 
 
 def read_url(url, payload=None):
@@ -139,9 +139,9 @@ def label(x, y, value, size, color, weight=400, mono=False, extra=""):
 
 
 def render(data, dark):
-    bg, fg, muted, border = ("#101820", "#F5F2EA", "#A7B7C3", "#2A3A46") if dark else ("#F8F7F2", "#20313A", "#596C74", "#D9DFD8")
-    accent = "#9BF0CD" if dark else "#246C56"
-    colors = ["#1E3038", "#245846", "#347D5D", "#65B993", "#9BF0CD"] if dark else ["#E3E8E1", "#C4E1D2", "#8BC5AB", "#4B9D7D", "#266F55"]
+    bg, fg, muted, border = ("#1A1A29", "#F7F5FF", "#B9B8D0", "#39384F") if dark else ("#FBFAF4", "#29283B", "#66677F", "#DDDCEB")
+    accent = "#C4B7FF" if dark else "#6B5DB8"
+    colors = ["#29283D", "#454267", "#625C98", "#9285D4", "#E9C85E"] if dark else ["#E7E7F2", "#C9D8EF", "#A7B9E9", "#A99CE1", "#7769C1"]
     parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="482" viewBox="0 0 1200 482" role="img" aria-labelledby="title desc">', '<title id="title">Lucas Fang — public GitHub activity</title>']
     cal = data["calendar"]
     contribution_desc = f'{cal["total"]:,} contributions in the last year.' if cal else "Contribution data currently unavailable."

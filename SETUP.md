@@ -44,13 +44,15 @@ Python 3.10+ and an internet connection are enough. With no token, the script re
 - **Activity panels:** `scripts/update_stats.py`.
 - **Local preview:** `scripts/build_preview.py`.
 
-The visual palette uses graphite, mint, coral, and warm white. SVG animation respects `prefers-reduced-motion`. The README uses GitHub-supported links, images, tables, anchors, `<picture>`, and native `<details>` disclosures. GitHub does not run arbitrary JavaScript or custom page CSS in a README.
+The visual palette uses pale butter, lavender, sky blue, and coral with dark ink for contrast. The hero and project illustrations are light-first; activity panels have coordinated light and dark variants. SVG animation respects `prefers-reduced-motion`. The README uses GitHub-supported links, images, tables, anchors, `<picture>`, and native `<details>` disclosures. GitHub does not run arbitrary JavaScript or custom page CSS in a README.
 
 ## Sources and editorial choices
 
-Profile details and contact links come from the supplied LinkedIn-export PDF. Featured-project descriptions, current scope, and reported benchmark numbers were checked against the public repositories on **2 November 2026**:
+Profile details and contact links come from the supplied LinkedIn-export PDF. OpenAssembler v0.2.0 details were reviewed against its public repository on **5 November 2026**; the earlier compiler benchmark snapshot and other featured-project descriptions were checked against their source repositories on **2 November 2026**:
 
 - [OpenAssembler README and results](https://github.com/Qingyang-Lucas-Fang/OpenAssembler)
+- [OpenAssembler tensor GEMM notes](https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/docs/TENSOR_GEMM.md)
+- [OpenAssembler integration review](https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/docs/INTEGRATION_REVIEW.md)
 - [OpenAssembler status and measurement notes](https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/docs/STATUS.md)
 - [OpenAssembler frontend scope](https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/docs/FRONTENDS.md)
 - [Grand Tool README](https://github.com/Qingyang-Lucas-Fang/AI-Automated-UI-Design-Workflow-From-Prompt-to-Demo)

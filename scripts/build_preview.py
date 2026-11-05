@@ -10,7 +10,7 @@ markdown = (ROOT / "README.md").read_text(encoding="utf-8")
 body = MarkdownIt("commonmark", {"html": True}).enable("table").render(markdown)
 body = body.replace('src="./assets/', 'src="../assets/').replace('srcset="./assets/', 'srcset="../assets/')
 template = r'''<!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -18,8 +18,10 @@ template = r'''<!doctype html>
   <link rel="icon" type="image/svg+xml" href="../assets/hero.svg">
   <title>Lucas Fang · GitHub profile preview</title>
   <style>
-    :root { --page:#0b1117; --surface:#101820; --text:#dce4e9; --muted:#9baeb9; --line:#293943; --link:#9bf0cd; --subtle:#17252e; }
-    :root[data-theme="light"] { --page:#f2f3f0; --surface:#fff; --text:#283740; --muted:#65747d; --line:#d8dfda; --link:#206b54; --subtle:#f3f5f2; }
+    :root { --page:#f4f3fb; --surface:#fffefa; --text:#29283b; --muted:#66677f; --line:#deddec; --link:#6b5db8; --subtle:#f1effa; }
+    :root[data-theme="dark"] { --page:#1b1b29; --surface:#242435; --text:#f5f3ff; --muted:#b9b8d0; --line:#3d3c52; --link:#c4b7ff; --subtle:#302f45; }
+    :root[data-theme="light"] { color-scheme:light; }
+    :root[data-theme="dark"] { color-scheme:dark; }
     * { box-sizing:border-box; }
     html { scroll-behavior:smooth; scroll-padding-top:90px; }
     body { margin:0; background:var(--page); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; font-size:15px; }
@@ -80,8 +82,8 @@ template = r'''<!doctype html>
     <div class="toolbar-inner">
       <div class="brand"><strong>LF / PROFILE</strong><span class="secondary"> &nbsp; · &nbsp; local GitHub README preview</span></div>
       <div class="controls" role="group" aria-label="Preview color theme">
-        <button id="light" type="button" aria-pressed="false">Light</button>
-        <button id="dark" type="button" aria-pressed="true">Dark</button>
+        <button id="light" type="button" aria-pressed="true">Light</button>
+        <button id="dark" type="button" aria-pressed="false">Dark</button>
       </div>
     </div>
   </header>
@@ -99,7 +101,7 @@ template = r'''<!doctype html>
     }
     document.getElementById('light').addEventListener('click', () => setTheme('light'));
     document.getElementById('dark').addEventListener('click', () => setTheme('dark'));
-    setTheme('dark');
+    setTheme('light');
   </script>
 </body>
 </html>
