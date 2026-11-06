@@ -226,9 +226,9 @@ Worked on peer-to-peer decentralized learning, convergence analysis, and network
 <p>
 <a href="https://github.com/Qingyang-Lucas-Fang?tab=overview">
 <picture>
-<source media="(prefers-color-scheme: dark)" srcset="./assets/activity-dark.svg?refresh=20261105T200456Z"/>
-<source media="(prefers-color-scheme: light)" srcset="./assets/activity-light.svg?refresh=20261105T200456Z"/>
-<img alt="Lucas Fang’s public GitHub activity: original public repositories, stars, followers, contribution calendar, and repository language distribution. Values and update time are shown in the panel." src="./assets/activity-light.svg?refresh=20261105T200456Z" width="100%"/>
+<source media="(prefers-color-scheme: dark)" srcset="./assets/activity-dark.svg?refresh=20261106T065811Z"/>
+<source media="(prefers-color-scheme: light)" srcset="./assets/activity-light.svg?refresh=20261106T065811Z"/>
+<img alt="Lucas Fang’s public GitHub activity: original public repositories, stars, followers, contribution calendar, and repository language distribution. Values and update time are shown in the panel." src="./assets/activity-light.svg?refresh=20261106T065811Z" width="100%"/>
 </picture>
 </a>
 </p>
