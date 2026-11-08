@@ -15,7 +15,7 @@
 </p>
 <hr/>
 <p>I build across the stack: from <strong>GPU instruction encoding and compiler backends</strong> to <strong>AI workflows people can actually use</strong>. My work connects hardware behavior, mathematical reasoning, and software systems through measurement and working implementations.</p>
-<p>My current focus is <strong>OpenAssembler v0.2.0</strong>: extending an SM80 compiler and emulator into native FP16/BF16 tensor GEMM, cooperative FP32 reductions, and explicit application workflows.</p>
+<p>My current focus is <strong>OpenAssembler v0.3.0</strong>: a native-first SM80 compiler and research platform with bounded parallel builds, tensor-kernel experiments, and explicit application workflows.</p>
 <table>
 <thead>
 <tr>
@@ -48,12 +48,12 @@
 <p><strong>Understanding the machine. Building the compiler.</strong></p>
 <p>
 <a href="https://github.com/lucialuka/OpenAssembler">
-<img alt="OpenAssembler v0.2.0: a custom NVIDIA SM80 compiler and emulator with native FP16/BF16 full-tile tensor GEMM, cooperative FP32 reductions, and explicit application workflows. Reported 10–30% gains are selective, workload-specific kernel results." src="./assets/openassembler.svg" width="100%"/>
+<img alt="OpenAssembler v0.3.0: a native-first NVIDIA SM80 compiler and emulator with bounded parallel builds, native FP16/BF16 tensor GEMM experiments, cooperative FP32 reductions, and explicit application workflows. Experimental scheduling improvements are shape-specific and do not establish universal speedups." src="./assets/openassembler.svg" width="100%"/>
 </a>
 </p>
-<p>OpenAssembler combines a PTX-to-SASS compiler backend, instruction encoder/decoder, and GPU emulator for <strong>NVIDIA Ampere (<code>sm_80</code>)</strong>. Version <strong>0.2.0</strong> adds full-tile FP16/BF16 GEMM with FP32 output, cooperative FP32 softmax and population LayerNorm, and explicit controls for traversal, epilogues, pointer placement, and application frontends.</p>
-<p>The current workflow supports native repository compilation plus explicitly selected <code>torch</code>, <code>triton</code>, or <code>inductor</code> application routes, with local, SSH, or Modal execution. The project's latest status reports <strong>nine of ten</strong> whole-transformer configurations passing both numerical gates; BF16 training remains excluded, and native OA GEMM/reduction paths remain opt-in because matched <code>ptxas</code> is still faster on the main measured shapes. The repository's approximate <strong>10–30%</strong> gain claim is selective and workload-specific, not a blanket end-to-end speedup.</p>
-<p><strong><a href="https://github.com/lucialuka/OpenAssembler">Explore the repository ↗</a></strong>   ·   <a href="https://github.com/lucialuka/OpenAssembler/blob/main/docs/STATUS.md">Architecture and status</a>   ·   <a href="https://github.com/lucialuka/OpenAssembler/blob/main/docs/COMMANDS.md">Command reference</a>   ·   <a href="https://github.com/lucialuka/OpenAssembler/tree/main/docs/research">Research catalogue</a></p>
+<p>OpenAssembler combines a PTX-to-SASS compiler backend, instruction encoder/decoder, and GPU emulator for <strong>NVIDIA Ampere (<code>sm_80</code>)</strong>. Version <strong>0.3.0</strong> adds bounded parallel native builds: four workers by default, capped at eight, while preserving source order and deterministic artifact publication.</p>
+<p>The workflow supports native repository compilation plus explicitly selected <code>torch</code>, <code>triton</code>, or <code>inductor</code> application routes, with local, SSH, or Modal execution. The latest status reports <strong>nine of ten</strong> whole-transformer configurations passing both numerical gates; BF16 training remains excluded. Kernel experiments report roughly <strong>1–10%</strong> schedule improvements on five tested shapes versus prior OpenAssembler schedules, while one large square shape regressed. These paths remain opt-in and experimental; matched <code>ptxas</code> remains faster on the main comparisons.</p>
+<p><strong><a href="https://github.com/lucialuka/OpenAssembler">Explore the repository ↗</a></strong>   ·   <a href="https://github.com/lucialuka/OpenAssembler/releases/tag/v0.3.0">v0.3.0 release notes</a>   ·   <a href="https://github.com/lucialuka/OpenAssembler/blob/main/docs/STATUS.md">Architecture and status</a>   ·   <a href="https://github.com/lucialuka/OpenAssembler/blob/main/docs/COMMANDS.md">Command reference</a>   ·   <a href="https://github.com/lucialuka/OpenAssembler/tree/main/docs/research">Research catalogue</a></p>
 <details>
 <summary><b>Open the engineering deep dive — architecture, evidence, and scope</b></summary>
 <h4>Compiler core and tensor-GEMM extension</h4>
@@ -64,13 +64,14 @@
 <li><strong>Constant division and remainder lowering:</strong> multiply-high sequences with Z3-backed equivalence checks.</li>
 <li><strong>A fast matrix-multiplication path:</strong> Strassen / AlphaTensor factorizations verified exactly over the rationals and compiled through the backend.</li>
 <li><strong>Multiple entry points:</strong> a small Python kernel subset, PTX, and CUDA C/C++ through <code>nvcc</code>’s PTX frontend, plus an interactive CLI.</li>
-<li><strong>Version 0.2.0 tensor kernels:</strong> full-tile FP16/BF16 GEMM with FP32 output, plus cooperative FP32 softmax and population LayerNorm with row/column tails.</li>
+<li><strong>Version 0.3.0 native-build path:</strong> bounded parallel compilation, with four workers by default and a cap of eight, while source order, cubin/SASS publication, and manifests remain deterministic.</li>
+<li><strong>Tensor-kernel research:</strong> full-tile FP16/BF16 GEMM with FP32 output, plus cooperative FP32 softmax and population LayerNorm with row/column tails.</li>
 <li><strong>Explicit application routes:</strong> configured <code>torch</code>, <code>triton</code>, and <code>inductor</code> frontends capture bounded workloads, package runtime state, replay caches, and verify model state; they do not automatically replace every library kernel.</li>
 <li><strong>Operational transports:</strong> native compilation and execution can use local Linux, SSH, or Modal backends with shared compile/run/cnr workflows.</li>
 </ul>
-<p>The latest status page reports nine of ten whole-transformer configurations passing both numerical gates, while one BF16 configuration remains excluded. Native tensor and reduction measurements are explicit, shape-dependent controls; same-source <code>ptxas</code> remains faster on the main compared shapes.</p>
+<p>The latest status page reports 630 passing repository checks plus one optional skipped PyTorch module, and nine of ten whole-transformer configurations passing both numerical gates; one BF16 configuration remains excluded. Native tensor and reduction measurements are explicit, shape-dependent controls; same-source <code>ptxas</code> remains faster on the main compared shapes.</p>
 <h4>Earlier compiler benchmark snapshot</h4>
-<p>The following A100 measurements describe the earlier compiler/probe snapshot documented on 2 November 2026. They are retained as historical context and do not measure the current v0.2.0 native-kernel or application workflows.</p>
+<p>The following A100 measurements describe the earlier compiler/probe snapshot documented on 2 November 2026. They are retained as historical context and do not measure the current v0.3.0 native-build path, kernel experiments, or application workflows.</p>
 <table>
 <thead>
 <tr>
@@ -173,7 +174,7 @@
 </details>
 <p><a id="more-work"></a></p>
 <h2>More work</h2>
-<p>Different domains, the same interest in how systems learn, reason, and execute.</p>
+<p>Current public work beyond the featured repositories.</p>
 <table>
 <thead>
 <tr>
@@ -183,20 +184,12 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left"><a href="https://github.com/lucialuka/Tutorial-On-Decentralized-Learning"><strong>Decentralized Learning Tutorial ↗</strong></a></td>
-<td style="text-align:left">Notes on federated learning, gossip learning, peer-to-peer networks, and decentralized clustering.</td>
+<td style="text-align:left"><a href="https://lucialuka.github.io/"><strong>Personal website ↗</strong></a></td>
+<td style="text-align:left">A public home for selected work, background, and contact information.</td>
 </tr>
 <tr>
-<td style="text-align:left"><a href="https://github.com/lucialuka/Math-Proof-Reasoning-Agent-Using-Knowledge-Graph-Network"><strong>Mathematical Proof Reasoning Agent ↗</strong></a></td>
-<td style="text-align:left">An exploratory knowledge-graph approach to finding logical chains for mathematical proofs.</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://github.com/lucialuka/Automatic-High-Frequency-Trading-Demo"><strong>AlphaForge-HFT ↗</strong></a></td>
-<td style="text-align:left">A trading-system demo with data ingestion, rolling strategy optimization, an execution layer, and a Plotly Dash dashboard.</td>
-</tr>
-<tr>
-<td style="text-align:left"><a href="https://github.com/lucialuka/Simple-Trading-Strategies"><strong>Simple Trading Strategies ↗</strong></a></td>
-<td style="text-align:left">Python notebooks exploring moving averages, mean reversion, MFI, RSI, and historical backtesting.</td>
+<td style="text-align:left"><a href="https://github.com/lucialuka/lucialuka"><strong>Profile source ↗</strong></a></td>
+<td style="text-align:left">The versioned README, generated visual assets, and refresh tooling behind this GitHub profile.</td>
 </tr>
 </tbody>
 </table>
@@ -227,9 +220,9 @@ Worked on peer-to-peer decentralized learning, convergence analysis, and network
 <p>
 <a href="https://github.com/lucialuka?tab=overview">
 <picture>
-<source media="(prefers-color-scheme: dark)" srcset="./assets/activity-dark.svg?refresh=20261105T104300Z"/>
-<source media="(prefers-color-scheme: light)" srcset="./assets/activity-light.svg?refresh=20261105T104300Z"/>
-<img alt="Lucas Fang’s public GitHub activity: original public repositories, stars, followers, contribution calendar, and repository language distribution. Values and update time are shown in the panel." src="./assets/activity-light.svg?refresh=20261105T104300Z" width="100%"/>
+<source media="(prefers-color-scheme: dark)" srcset="./assets/activity-dark.svg?refresh=20261108T145331Z"/>
+<source media="(prefers-color-scheme: light)" srcset="./assets/activity-light.svg?refresh=20261108T145331Z"/>
+<img alt="Lucas Fang’s public GitHub activity: original public repositories, stars, followers, contribution calendar, and repository language distribution. Values and update time are shown in the panel." src="./assets/activity-light.svg?refresh=20261108T145331Z" width="100%"/>
 </picture>
 </a>
 </p>

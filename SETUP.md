@@ -48,7 +48,7 @@ The visual palette uses pale butter, lavender, sky blue, and coral with dark ink
 
 ## Sources and editorial choices
 
-Profile details and contact links come from the supplied LinkedIn-export PDF. OpenAssembler v0.2.0 details and latest status were reviewed against its public repository on **8 November 2026**; the earlier compiler benchmark snapshot and other featured-project descriptions were checked against their source repositories on **2 November 2026**:
+Profile details and contact links come from the supplied LinkedIn-export PDF. OpenAssembler v0.3.0 details and latest status were reviewed against its public repository on **8 November 2026**; the earlier compiler benchmark snapshot and other featured-project descriptions were checked against their source repositories on **2 November 2026**:
 
 - [OpenAssembler README and results](https://github.com/lucialuka/OpenAssembler)
 - [OpenAssembler status and measurement notes](https://github.com/lucialuka/OpenAssembler/blob/main/docs/STATUS.md)
