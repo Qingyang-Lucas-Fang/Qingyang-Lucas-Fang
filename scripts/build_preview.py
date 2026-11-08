@@ -88,7 +88,7 @@ template = r'''<!doctype html>
     </div>
   </header>
   <main class="frame">
-    <div class="filebar"><span>Qingyang-Lucas-Fang / README.md</span><span>● rendered preview</span></div>
+    <div class="filebar"><span>lucialuka / README.md</span><span>● rendered preview</span></div>
     <article class="markdown-body">__README_BODY__</article>
   </main>
   <p class="preview-note">Local preview · The profile uses GitHub-native interactions. This preview toolbar is not part of the README.</p>

@@ -1,8 +1,8 @@
 # Put this on your GitHub profile
 
-The profile is designed for **Qingyang-Lucas-Fang**. All artwork is stored in this folder; the README has no required badge, chart, font, or animation service.
+The profile is designed for **lucialuka**. All artwork is stored in this folder; the README has no required badge, chart, font, or animation service.
 
-1. This repository is already connected to the **`Qingyang-Lucas-Fang`** profile repository. GitHub displays its root README on your personal profile.
+1. This repository is already connected to the **`lucialuka`** profile repository. GitHub displays its root README on your personal profile.
 2. Keep the README, assets, stats script, and workflow together at the repository root. The local `preview/` folder and this setup guide are optional.
 3. Open **Actions → Refresh profile statistics → Run workflow** to refresh the statistics immediately. Scheduled refreshes run at 00:17, 06:17, 12:17, and 18:17 UTC (08:17, 14:17, 20:17, and 02:17 Asia/Shanghai).
 
@@ -48,14 +48,14 @@ The visual palette uses pale butter, lavender, sky blue, and coral with dark ink
 
 ## Sources and editorial choices
 
-Profile details and contact links come from the supplied LinkedIn-export PDF. OpenAssembler v0.2.0 details were reviewed against its public repository on **5 November 2026**; the earlier compiler benchmark snapshot and other featured-project descriptions were checked against their source repositories on **2 November 2026**:
+Profile details and contact links come from the supplied LinkedIn-export PDF. OpenAssembler v0.2.0 details and latest status were reviewed against its public repository on **8 November 2026**; the earlier compiler benchmark snapshot and other featured-project descriptions were checked against their source repositories on **2 November 2026**:
 
-- [OpenAssembler README and results](https://github.com/Qingyang-Lucas-Fang/OpenAssembler)
-- [OpenAssembler tensor GEMM notes](https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/docs/TENSOR_GEMM.md)
-- [OpenAssembler integration review](https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/docs/INTEGRATION_REVIEW.md)
-- [OpenAssembler status and measurement notes](https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/docs/STATUS.md)
-- [OpenAssembler frontend scope](https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/docs/FRONTENDS.md)
-- [Grand Tool README](https://github.com/Qingyang-Lucas-Fang/AI-Automated-UI-Design-Workflow-From-Prompt-to-Demo)
+- [OpenAssembler README and results](https://github.com/lucialuka/OpenAssembler)
+- [OpenAssembler status and measurement notes](https://github.com/lucialuka/OpenAssembler/blob/main/docs/STATUS.md)
+- [OpenAssembler command reference](https://github.com/lucialuka/OpenAssembler/blob/main/docs/COMMANDS.md)
+- [OpenAssembler research catalogue](https://github.com/lucialuka/OpenAssembler/tree/main/docs/research)
+- [OpenAssembler frontend scope](https://github.com/lucialuka/OpenAssembler/blob/main/docs/FRONTENDS.md)
+- [Grand Tool README](https://github.com/lucialuka/AI-Automated-UI-Design-Workflow-From-Prompt-to-Demo)
 - The README files of the four linked additional projects.
 
 Benchmark numbers are attributed to the project, rather than presented as independently rerun results. Trading backtest returns and Sharpe ratios were omitted. Research interests are described without inventing publication venues, degrees, or paper links. The original PDF is not included in the public profile package.

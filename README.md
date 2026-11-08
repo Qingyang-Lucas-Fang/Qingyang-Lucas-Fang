@@ -2,7 +2,7 @@
 <p align="center">
 <img alt="Lucas Fang — hardware–software co-design. From silicon to software." src="./assets/hero.svg" width="100%"/>
 </p>
-<h1 align="center">Qingyang (Lucas) Fang</h1>
+<h1 align="center">Lucas Fang</h1>
 <p align="center">
 <b>Hardware–software co-design engineer · GPU compilers · AI systems</b>
 </p>
@@ -15,7 +15,7 @@
 </p>
 <hr/>
 <p>I build across the stack: from <strong>GPU instruction encoding and compiler backends</strong> to <strong>AI workflows people can actually use</strong>. My work connects hardware behavior, mathematical reasoning, and software systems through measurement and working implementations.</p>
-<p>My current focus is <strong>OpenAssembler v0.2.0</strong>: extending an SM80 compiler and emulator into native FP16/BF16 tensor GEMM and a configured PyTorch integration path.</p>
+<p>My current focus is <strong>OpenAssembler v0.2.0</strong>: extending an SM80 compiler and emulator into native FP16/BF16 tensor GEMM, cooperative FP32 reductions, and explicit application workflows.</p>
 <table>
 <thead>
 <tr>
@@ -47,13 +47,13 @@
 <h3>01 / OpenAssembler</h3>
 <p><strong>Understanding the machine. Building the compiler.</strong></p>
 <p>
-<a href="https://github.com/Qingyang-Lucas-Fang/OpenAssembler">
-<img alt="OpenAssembler v0.2.0: a custom NVIDIA SM80 compiler and emulator with native FP16/BF16 full-tile tensor GEMM and a configured PyTorch graph-capture workflow. Reported 16–27% GEMM improvement is against the prior direct schedule, not end-to-end training." src="./assets/openassembler.svg" width="100%"/>
+<a href="https://github.com/lucialuka/OpenAssembler">
+<img alt="OpenAssembler v0.2.0: a custom NVIDIA SM80 compiler and emulator with native FP16/BF16 full-tile tensor GEMM, cooperative FP32 reductions, and explicit application workflows. Reported 10–30% gains are selective, workload-specific kernel results." src="./assets/openassembler.svg" width="100%"/>
 </a>
 </p>
-<p>OpenAssembler combines a PTX-to-SASS compiler backend, instruction encoder/decoder, and GPU emulator for <strong>NVIDIA Ampere (<code>sm_80</code>)</strong>. Version <strong>0.2.0</strong> adds a native FP16/BF16 tensor-core GEMM path for full tiles, using a specialized schedule that integrates with the project's SASS tooling.</p>
-<p>A configured PyTorch workflow demonstrates the extension on a selected transformer with CUDA graph capture. The project's reviewed report says the tuned GEMM is <strong>16–27% faster than its previous direct schedule</strong> on tested shapes and reaches <strong>80–99% of matched cuBLAS throughput</strong>. These are GEMM-level, project-reported comparisons, not end-to-end training speedups or broad model benchmarks. The integration is explicitly configured; it does not automatically replace every model GEMM.</p>
-<p><strong><a href="https://github.com/Qingyang-Lucas-Fang/OpenAssembler">Explore the repository ↗</a></strong>   ·   <a href="https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/docs/TENSOR_GEMM.md">Tensor GEMM details</a>   ·   <a href="https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/docs/INTEGRATION_REVIEW.md">Integration review</a>   ·   <a href="https://github.com/Qingyang-Lucas-Fang/OpenAssembler/blob/main/REPRODUCING.md">Reproduction guide</a></p>
+<p>OpenAssembler combines a PTX-to-SASS compiler backend, instruction encoder/decoder, and GPU emulator for <strong>NVIDIA Ampere (<code>sm_80</code>)</strong>. Version <strong>0.2.0</strong> adds full-tile FP16/BF16 GEMM with FP32 output, cooperative FP32 softmax and population LayerNorm, and explicit controls for traversal, epilogues, pointer placement, and application frontends.</p>
+<p>The current workflow supports native repository compilation plus explicitly selected <code>torch</code>, <code>triton</code>, or <code>inductor</code> application routes, with local, SSH, or Modal execution. The project's latest status reports <strong>nine of ten</strong> whole-transformer configurations passing both numerical gates; BF16 training remains excluded, and native OA GEMM/reduction paths remain opt-in because matched <code>ptxas</code> is still faster on the main measured shapes. The repository's approximate <strong>10–30%</strong> gain claim is selective and workload-specific, not a blanket end-to-end speedup.</p>
+<p><strong><a href="https://github.com/lucialuka/OpenAssembler">Explore the repository ↗</a></strong>   ·   <a href="https://github.com/lucialuka/OpenAssembler/blob/main/docs/STATUS.md">Architecture and status</a>   ·   <a href="https://github.com/lucialuka/OpenAssembler/blob/main/docs/COMMANDS.md">Command reference</a>   ·   <a href="https://github.com/lucialuka/OpenAssembler/tree/main/docs/research">Research catalogue</a></p>
 <details>
 <summary><b>Open the engineering deep dive — architecture, evidence, and scope</b></summary>
 <h4>Compiler core and tensor-GEMM extension</h4>
@@ -64,12 +64,13 @@
 <li><strong>Constant division and remainder lowering:</strong> multiply-high sequences with Z3-backed equivalence checks.</li>
 <li><strong>A fast matrix-multiplication path:</strong> Strassen / AlphaTensor factorizations verified exactly over the rationals and compiled through the backend.</li>
 <li><strong>Multiple entry points:</strong> a small Python kernel subset, PTX, and CUDA C/C++ through <code>nvcc</code>’s PTX frontend, plus an interactive CLI.</li>
-<li><strong>Version 0.2.0 tensor GEMM:</strong> a native SM80 tensor-core path for FP16/BF16 matrix multiplication, specialized for supported full-tile inputs.</li>
-<li><strong>PyTorch integration:</strong> a configured application workflow routes supported GEMM calls through the extension and uses CUDA graph capture for replay; it is a separate integration layer, not automatic compiler-wide substitution.</li>
+<li><strong>Version 0.2.0 tensor kernels:</strong> full-tile FP16/BF16 GEMM with FP32 output, plus cooperative FP32 softmax and population LayerNorm with row/column tails.</li>
+<li><strong>Explicit application routes:</strong> configured <code>torch</code>, <code>triton</code>, and <code>inductor</code> frontends capture bounded workloads, package runtime state, replay caches, and verify model state; they do not automatically replace every library kernel.</li>
+<li><strong>Operational transports:</strong> native compilation and execution can use local Linux, SSH, or Modal backends with shared compile/run/cnr workflows.</li>
 </ul>
-<p>The integration review reports 16–27% lower GEMM time than the previous direct schedule on tested shapes and 80–99% of matched cuBLAS throughput. The selected-transformer path is an integration check, not a reported end-to-end training speedup.</p>
+<p>The latest status page reports nine of ten whole-transformer configurations passing both numerical gates, while one BF16 configuration remains excluded. Native tensor and reduction measurements are explicit, shape-dependent controls; same-source <code>ptxas</code> remains faster on the main compared shapes.</p>
 <h4>Earlier compiler benchmark snapshot</h4>
-<p>The following A100 measurements describe the compiler/probe snapshot documented on 2 November 2026. They are separate from the v0.2.0 tensor-GEMM comparisons above and do not measure end-to-end PyTorch training.</p>
+<p>The following A100 measurements describe the earlier compiler/probe snapshot documented on 2 November 2026. They are retained as historical context and do not measure the current v0.2.0 native-kernel or application workflows.</p>
 <table>
 <thead>
 <tr>
@@ -106,24 +107,24 @@
 </tr>
 </tbody>
 </table>
-<p>These are <strong>project-reported results for specific workloads</strong>, documented in the repository's benchmark notes. The 203-probe compilation coverage is larger than the 110-probe hardware-validated subset. Tight dependent chains remain slower than <code>ptxas</code>; the earlier fast-matmul results do not beat cuBLAS. They are retained as a dated baseline, not presented as measurements of v0.2.0's specialized tensor-GEMM path.</p>
-<p><strong>Current scope:</strong> the SASS encoder and latency model target <code>sm_80</code>. The general backend remains a partial PTX compiler with documented frontend and instruction limits; its compatible ELF packaging still uses a <code>ptxas</code>-generated container. The tensor-GEMM path has narrower shape and tile requirements and should not be read as support for arbitrary PyTorch models or GPUs.</p>
+<p>These are <strong>project-reported results for specific workloads</strong>, documented in the repository's benchmark notes. The current status page separates native compiler results, library controls, application-front-end results, and experimental research. The tensor and rowwise paths have narrower shape, layout, precision, and launch contracts and should not be read as support for arbitrary models or GPUs.</p>
+<p><strong>Current scope:</strong> the SASS encoder and latency model target <code>sm_80</code>. Native GEMM requires full tiles, contiguous K, FP32 accumulation/output, and explicit option selection. Cooperative rowwise operators are bounded FP32 paths without affine parameters, saved statistics, or backward support. The compatible ELF packaging still uses a <code>ptxas</code>-generated container.</p>
 <details>
 <summary>See the actual CLI</summary>
-<p><img alt="OpenAssembler CLI screenshot from the project" src="https://raw.githubusercontent.com/Qingyang-Lucas-Fang/OpenAssembler/main/figs/OpenAssembler_CLI.png"/></p>
+<p><img alt="OpenAssembler CLI screenshot from the project" src="https://raw.githubusercontent.com/lucialuka/OpenAssembler/main/figs/OpenAssembler_CLI.png"/></p>
 </details>
 </details>
 <br/>
 <h3>02 / Grand Tool</h3>
 <p><strong>From a product idea to a reviewable design and a working demo.</strong></p>
 <p>
-<a href="https://github.com/Qingyang-Lucas-Fang/AI-Automated-UI-Design-Workflow-From-Prompt-to-Demo">
+<a href="https://github.com/lucialuka/AI-Automated-UI-Design-Workflow-From-Prompt-to-Demo">
 <img alt="Grand Tool: prompt and context to blueprint, Pencil MCP design, review with a human checkpoint, then an HTML or React demo. A local, artifact-driven AI design workflow." src="./assets/grand-tool.svg" width="100%"/>
 </a>
 </p>
 <p>An <strong>MCP-first local AI design workflow</strong> that connects prompts and context files to a structured blueprint, Pencil design automation, artifact review, and explicit HTML/React demo generation.</p>
 <p>The system makes each stage inspectable: tasks keep their own state, design exports, screenshots, review notes, and generated code. A <strong>human review checkpoint</strong> sits between design review and code generation.</p>
-<p><strong><a href="https://github.com/Qingyang-Lucas-Fang/AI-Automated-UI-Design-Workflow-From-Prompt-to-Demo">Explore the repository ↗</a></strong>   ·   <a href="https://github.com/Qingyang-Lucas-Fang/AI-Automated-UI-Design-Workflow-From-Prompt-to-Demo/blob/main/USER_GUIDE.md">User guide</a>   ·   <a href="https://github.com/Qingyang-Lucas-Fang/AI-Automated-UI-Design-Workflow-From-Prompt-to-Demo/blob/main/DEVELOPER_GUIDE.md">Architecture</a></p>
+<p><strong><a href="https://github.com/lucialuka/AI-Automated-UI-Design-Workflow-From-Prompt-to-Demo">Explore the repository ↗</a></strong>   ·   <a href="https://github.com/lucialuka/AI-Automated-UI-Design-Workflow-From-Prompt-to-Demo/blob/main/USER_GUIDE.md">User guide</a>   ·   <a href="https://github.com/lucialuka/AI-Automated-UI-Design-Workflow-From-Prompt-to-Demo/blob/main/DEVELOPER_GUIDE.md">Architecture</a></p>
 <details>
 <summary><b>Open the product deep dive — orchestration, artifacts, and outputs</b></summary>
 <h4>The workflow</h4>
@@ -182,24 +183,24 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left"><a href="https://github.com/Qingyang-Lucas-Fang/Tutorial-On-Decentralized-Learning"><strong>Decentralized Learning Tutorial ↗</strong></a></td>
+<td style="text-align:left"><a href="https://github.com/lucialuka/Tutorial-On-Decentralized-Learning"><strong>Decentralized Learning Tutorial ↗</strong></a></td>
 <td style="text-align:left">Notes on federated learning, gossip learning, peer-to-peer networks, and decentralized clustering.</td>
 </tr>
 <tr>
-<td style="text-align:left"><a href="https://github.com/Qingyang-Lucas-Fang/Math-Proof-Reasoning-Agent-Using-Knowledge-Graph-Network"><strong>Mathematical Proof Reasoning Agent ↗</strong></a></td>
+<td style="text-align:left"><a href="https://github.com/lucialuka/Math-Proof-Reasoning-Agent-Using-Knowledge-Graph-Network"><strong>Mathematical Proof Reasoning Agent ↗</strong></a></td>
 <td style="text-align:left">An exploratory knowledge-graph approach to finding logical chains for mathematical proofs.</td>
 </tr>
 <tr>
-<td style="text-align:left"><a href="https://github.com/Qingyang-Lucas-Fang/Automatic-High-Frequency-Trading-Demo"><strong>AlphaForge-HFT ↗</strong></a></td>
+<td style="text-align:left"><a href="https://github.com/lucialuka/Automatic-High-Frequency-Trading-Demo"><strong>AlphaForge-HFT ↗</strong></a></td>
 <td style="text-align:left">A trading-system demo with data ingestion, rolling strategy optimization, an execution layer, and a Plotly Dash dashboard.</td>
 </tr>
 <tr>
-<td style="text-align:left"><a href="https://github.com/Qingyang-Lucas-Fang/Simple-Trading-Strategies"><strong>Simple Trading Strategies ↗</strong></a></td>
+<td style="text-align:left"><a href="https://github.com/lucialuka/Simple-Trading-Strategies"><strong>Simple Trading Strategies ↗</strong></a></td>
 <td style="text-align:left">Python notebooks exploring moving averages, mean reversion, MFI, RSI, and historical backtesting.</td>
 </tr>
 </tbody>
 </table>
-<p align="right"><a href="https://github.com/Qingyang-Lucas-Fang?tab=repositories">Browse all repositories →</a></p>
+<p align="right"><a href="https://github.com/lucialuka?tab=repositories">Browse all repositories →</a></p>
 <p><a id="background"></a></p>
 <h2>Background</h2>
 <p><strong>Machine Learning Intern · University of California, Santa Cruz · Summer 2026</strong><br/>
@@ -224,7 +225,7 @@ Worked on peer-to-peer decentralized learning, convergence analysis, and network
 <p><a id="activity"></a></p>
 <h2>Activity, in public</h2>
 <p>
-<a href="https://github.com/Qingyang-Lucas-Fang?tab=overview">
+<a href="https://github.com/lucialuka?tab=overview">
 <picture>
 <source media="(prefers-color-scheme: dark)" srcset="./assets/activity-dark.svg?refresh=20261105T104300Z"/>
 <source media="(prefers-color-scheme: light)" srcset="./assets/activity-light.svg?refresh=20261105T104300Z"/>
@@ -236,5 +237,5 @@ Worked on peer-to-peer decentralized learning, convergence analysis, and network
 <p><a id="connect"></a></p>
 <h2>Let’s build across layers.</h2>
 <p>Interested in <strong>GPU compilers, hardware–software co-design, AI infrastructure, or developer tools</strong>? I’d love to compare notes.</p>
-<p><strong><a href="mailto:LucasFang2@outlook.com">Email ↗</a></strong>   /   <strong><a href="https://www.linkedin.com/in/qingyang-f-0320563a3/">LinkedIn ↗</a></strong>   /   <strong><a href="https://scholar.google.com/citations?user=5snMbcMAAAAJ&amp;hl=en">Google Scholar ↗</a></strong>   /   <strong><a href="https://github.com/Qingyang-Lucas-Fang">GitHub ↗</a></strong></p>
+<p><strong><a href="mailto:LucasFang2@outlook.com">Email ↗</a></strong>   /   <strong><a href="https://www.linkedin.com/in/qingyang-f-0320563a3/">LinkedIn ↗</a></strong>   /   <strong><a href="https://scholar.google.com/citations?user=5snMbcMAAAAJ&amp;hl=en">Google Scholar ↗</a></strong>   /   <strong><a href="https://github.com/lucialuka">GitHub ↗</a></strong></p>
 <p align="right"><a href="#top">Back to the top ↑</a></p>

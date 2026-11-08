@@ -15,7 +15,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
-OWNER = os.environ.get("PROFILE_OWNER", "Qingyang-Lucas-Fang")
+OWNER = os.environ.get("PROFILE_OWNER", "lucialuka")
 TOKEN = os.environ.get("GH_TOKEN", "")
 LANGUAGE_COLORS = {"Python": "#7C72CF", "Jupyter Notebook": "#E3B94F", "TypeScript": "#559FC4", "JavaScript": "#D77968", "HTML": "#8E83D5", "CSS": "#74B4CC", "C++": "#CC83A2", "C": "#71849E", "Shell": "#A8A2D8", "Other": "#9B9CAD"}
 

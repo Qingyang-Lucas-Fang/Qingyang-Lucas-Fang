@@ -89,8 +89,8 @@ def compiler():
     b += text(40, 39, "01 / GPU COMPILER ENGINEERING", 12, LAVENDER, mono=True, extra='letter-spacing="1.7"')
     b += text(40, 94, "OpenAssembler", 44, INK, 700, extra='letter-spacing="-1.5"')
     b += text(1160, 38, "v0.2.0 / AMPERE sm_80", 12, MUTED, mono=True, extra='text-anchor="end"')
-    b += text(41, 125, "A compiler project growing into native tensor GEMM.", 17, MUTED)
-    nodes = [(40, 210, "INPUTS", "PTX / CUDA"), (284, 354, "CUSTOM BACKEND", "Select → allocate → schedule"), (672, 200, "TENSOR GEMM", "FP16 / BF16 tiles"), (906, 254, "HARDWARE", "NVIDIA SM80")]
+    b += text(41, 125, "A compiler project growing into native tensor kernels.", 17, MUTED)
+    nodes = [(40, 210, "INPUTS", "PTX / CUDA"), (284, 354, "CUSTOM BACKEND", "Select → allocate → schedule"), (672, 200, "TENSOR OPS", "GEMM / softmax / LN"), (906, 254, "HARDWARE", "NVIDIA SM80")]
     for x, w, label, sub in nodes:
         b += rect(x, 158, w, 73, WHITE, "#D9D5EF", 7)
         b += text(x + 17, 184, label, 11, LAVENDER, mono=True, extra='letter-spacing="1.1"')
@@ -100,12 +100,12 @@ def compiler():
         b += line(x1, 195, x2, 195, BLUE, 'stroke-width="2" class="signal"')
         b += f'<path d="M{x2-7} 191l7 4-7 4" fill="none" stroke="{BLUE}"/>'
     b += line(40, 254, 1160, 254)
-    for x, value, label, sub, color in [(40, "0.2.0", "Current release", "Compiler + tensor-GEMM work", LAVENDER), (440, "FP16 / BF16", "Native tensor GEMM", "Specialized SM80 full tiles", CORAL), (840, "16–27%", "Faster GEMM schedule", "Vs. prior direct schedule", "#4D9DBD")]:
+    for x, value, label, sub, color in [(40, "0.2.0", "Current release", "Compiler + tensor-kernel work", LAVENDER), (440, "FP16 / BF16", "Native tensor GEMM", "FP32 output · full tiles", CORAL), (840, "10–30%", "Selective-kernel reports", "Workload-specific, not universal", "#4D9DBD")]:
         b += text(x, 303, value, 38, color, 700, extra='letter-spacing="-1.3"')
-        label_offset = 280 if value == "FP16 / BF16" else (180 if value == "16–27%" else 150)
+        label_offset = 280 if value == "FP16 / BF16" else (180 if value == "10–30%" else 150)
         b += text(x + label_offset, 286, label, 14, INK)
         b += text(x + label_offset, 309, sub, 11, MUTED)
-    wrap("openassembler.svg", "OpenAssembler v0.2.0 — GPU compiler engineering", "OpenAssembler v0.2.0 adds a native NVIDIA SM80 FP16 and BF16 full-tile tensor-GEMM path. Its configured PyTorch graph-capture workflow reports 16 to 27 percent faster GEMM than the previous direct schedule, not end-to-end training speedups.", 348, b)
+    wrap("openassembler.svg", "OpenAssembler v0.2.0 — GPU compiler engineering", "OpenAssembler v0.2.0 adds native NVIDIA SM80 FP16 and BF16 full-tile tensor GEMM, cooperative FP32 reductions, and explicit application workflows. The repository reports approximately 10 to 30 percent gains on selective workload-specific kernels, not universal end-to-end speedups.", 348, b)
 
 
 def grand_tool():
