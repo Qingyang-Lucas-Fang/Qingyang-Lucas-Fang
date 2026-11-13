@@ -15,7 +15,7 @@
 </p>
 <hr/>
 <p>I build across the stack: from <strong>GPU instruction encoding and compiler backends</strong> to <strong>AI workflows people can actually use</strong>. My work connects hardware behavior, mathematical reasoning, and software systems through measurement and working implementations.</p>
-<p>My current focus is <strong>OpenAssembler v0.3.0</strong>: a native-first SM80 compiler and research platform with bounded parallel builds, tensor-kernel experiments, and explicit application workflows.</p>
+<p>My current focus is <strong>OpenAssembler v0.3.0</strong>: a native NVIDIA SASS/cubin compiler for SM80/A100 with exact shape-aware dispatch, OA-owned model kernels, and measured optimization research.</p>
 <table>
 <thead>
 <tr>
@@ -48,12 +48,12 @@
 <p><strong>Understanding the machine. Building the compiler.</strong></p>
 <p>
 <a href="https://github.com/lucialuka/OpenAssembler">
-<img alt="OpenAssembler v0.3.0: a native-first NVIDIA SM80 compiler and emulator with bounded parallel builds, native FP16/BF16 tensor GEMM experiments, cooperative FP32 reductions, and explicit application workflows. Experimental scheduling improvements are shape-specific and do not establish universal speedups." src="./assets/openassembler.svg" width="100%"/>
+<img alt="OpenAssembler v0.3.0: a native NVIDIA SM80/A100 SASS and cubin compiler with shape-aware native GEMM dispatch, OA-owned model kernels, cooperative FP32 reductions, and measured optimization research. Results are contract-specific and do not establish universal speedups." src="./assets/openassembler.svg" width="100%"/>
 </a>
 </p>
-<p>OpenAssembler combines a PTX-to-SASS compiler backend, instruction encoder/decoder, and GPU emulator for <strong>NVIDIA Ampere (<code>sm_80</code>)</strong>. Version <strong>0.3.0</strong> adds bounded parallel native builds: four workers by default, capped at eight, while preserving source order and deterministic artifact publication.</p>
-<p>The workflow supports native repository compilation plus explicitly selected <code>torch</code>, <code>triton</code>, or <code>inductor</code> application routes, with local, SSH, or Modal execution. The latest status reports <strong>nine of ten</strong> whole-transformer configurations passing both numerical gates; BF16 training remains excluded. Kernel experiments report roughly <strong>1–10%</strong> schedule improvements on five tested shapes versus prior OpenAssembler schedules, while one large square shape regressed. These paths remain opt-in and experimental; matched <code>ptxas</code> remains faster on the main comparisons.</p>
-<p><strong><a href="https://github.com/lucialuka/OpenAssembler">Explore the repository ↗</a></strong>   ·   <a href="https://github.com/lucialuka/OpenAssembler/releases/tag/v0.3.0">v0.3.0 release notes</a>   ·   <a href="https://github.com/lucialuka/OpenAssembler/blob/main/docs/STATUS.md">Architecture and status</a>   ·   <a href="https://github.com/lucialuka/OpenAssembler/blob/main/docs/COMMANDS.md">Command reference</a>   ·   <a href="https://github.com/lucialuka/OpenAssembler/tree/main/docs/research">Research catalogue</a></p>
+<p>OpenAssembler combines a PTX-to-SASS compiler backend, instruction encoder/decoder, and GPU emulator for <strong>NVIDIA Ampere (<code>sm_80</code>)</strong>. The current native model route captures configured Python graphs and emits OA-owned forward, backward, MSE, and SGD cubins with full state verification; unsupported operations fail and vendor GPU fallback is disabled.</p>
+<p>Shape-aware dispatch now covers <strong>42 exact contracts</strong>, installing <strong>34 tuned native policies</strong> plus eight verified baseline retentions; unknown or stale contracts fall back to the reference. The status snapshot reports <strong>952 checks passed</strong> with two optional Torch modules skipped, while native attention, cached decoding, model-build caching, GEMM, and rowwise measurements remain bounded by their explicit contracts. Matched <code>ptxas</code> and cuBLAS remain faster in the main comparisons, so the profile presents these as measured native paths and research results rather than universal speedup claims.</p>
+<p><strong><a href="https://github.com/lucialuka/OpenAssembler">Explore the repository ↗</a></strong>   ·   <a href="https://github.com/lucialuka/OpenAssembler/releases/tag/v0.3.0">v0.3.0 release notes</a>   ·   <a href="https://github.com/lucialuka/OpenAssembler/blob/main/docs/STATUS.md">Architecture and status</a>   ·   <a href="https://github.com/lucialuka/OpenAssembler/blob/main/docs/COMMANDS.md">Command reference</a>   ·   <a href="https://github.com/lucialuka/OpenAssembler/tree/main/docs/research">Research catalogue</a>   ·   <a href="https://github.com/lucialuka/OpenAssembler/tree/main/docs/reverse_eng_results">Reverse-engineering results</a></p>
 <details>
 <summary><b>Open the engineering deep dive — architecture, evidence, and scope</b></summary>
 <h4>Compiler core and tensor-GEMM extension</h4>
@@ -65,13 +65,14 @@
 <li><strong>A fast matrix-multiplication path:</strong> Strassen / AlphaTensor factorizations verified exactly over the rationals and compiled through the backend.</li>
 <li><strong>Multiple entry points:</strong> a small Python kernel subset, PTX, and CUDA C/C++ through <code>nvcc</code>’s PTX frontend, plus an interactive CLI.</li>
 <li><strong>Version 0.3.0 native-build path:</strong> bounded parallel compilation, with four workers by default and a cap of eight, while source order, cubin/SASS publication, and manifests remain deterministic.</li>
+<li><strong>Shape-aware native dispatch:</strong> 42 exact GEMM contracts install 34 tuned policies and eight verified baseline retentions; unknown or stale contracts keep the reference path.</li>
 <li><strong>Tensor-kernel research:</strong> full-tile FP16/BF16 GEMM with FP32 output, plus cooperative FP32 softmax and population LayerNorm with row/column tails.</li>
-<li><strong>Explicit application routes:</strong> configured <code>torch</code>, <code>triton</code>, and <code>inductor</code> frontends capture bounded workloads, package runtime state, replay caches, and verify model state; they do not automatically replace every library kernel.</li>
+<li><strong>OA-owned model execution:</strong> a constrained Python model route emits forward, backward, MSE, and SGD kernels, with exact input contracts, saved native launch plans, and complete state verification.</li>
 <li><strong>Operational transports:</strong> native compilation and execution can use local Linux, SSH, or Modal backends with shared compile/run/cnr workflows.</li>
 </ul>
-<p>The latest status page reports 630 passing repository checks plus one optional skipped PyTorch module, and nine of ten whole-transformer configurations passing both numerical gates; one BF16 configuration remains excluded. Native tensor and reduction measurements are explicit, shape-dependent controls; same-source <code>ptxas</code> remains faster on the main compared shapes.</p>
+<p>The latest status page, updated November 12 and carrying the November 13 production snapshot, reports 952 passing repository checks with two optional Torch modules skipped. It also records nine of ten whole-transformer configurations passing both numerical gates, complete checks for the constrained native model route, and current A100 evidence for exact dispatch, attention, caching, GEMM, and rowwise paths. The tensor and model results remain shape- and contract-specific; same-source <code>ptxas</code> and cuBLAS remain faster in the main comparisons.</p>
 <h4>Earlier compiler benchmark snapshot</h4>
-<p>The following A100 measurements describe the earlier compiler/probe snapshot documented on 2 November 2026. They are retained as historical context and do not measure the current v0.3.0 native-build path, kernel experiments, or application workflows.</p>
+<p>The following A100 measurements describe the earlier compiler/probe snapshot documented on 2 November 2026. They are retained as historical context and do not measure the current v0.3.0 native model route, exact dispatch table, or later kernel research.</p>
 <table>
 <thead>
 <tr>
@@ -109,7 +110,7 @@
 </tbody>
 </table>
 <p>These are <strong>project-reported results for specific workloads</strong>, documented in the repository's benchmark notes. The current status page separates native compiler results, library controls, application-front-end results, and experimental research. The tensor and rowwise paths have narrower shape, layout, precision, and launch contracts and should not be read as support for arbitrary models or GPUs.</p>
-<p><strong>Current scope:</strong> the SASS encoder and latency model target <code>sm_80</code>. Native GEMM requires full tiles, contiguous K, FP32 accumulation/output, and explicit option selection. Cooperative rowwise operators are bounded FP32 paths without affine parameters, saved statistics, or backward support. The compatible ELF packaging still uses a <code>ptxas</code>-generated container.</p>
+<p><strong>Current scope:</strong> the SASS encoder and latency model target <code>sm_80</code> on validated A100 paths. Native GEMM requires full tiles, contiguous K, FP32 accumulation/output, and exact contract selection. Cooperative rowwise operators are bounded FP32 paths without saved statistics, backward support, arbitrary layouts, or affine parameters. The native model route requires configured CPU graph factories and exact input shapes. The compatible ELF packaging still uses a <code>ptxas</code>-generated donor container.</p>
 <details>
 <summary>See the actual CLI</summary>
 <p><img alt="OpenAssembler CLI screenshot from the project" src="https://raw.githubusercontent.com/lucialuka/OpenAssembler/main/figs/OpenAssembler_CLI.png"/></p>

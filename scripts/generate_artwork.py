@@ -88,8 +88,8 @@ def compiler():
     b = rect(1, 1, 1198, 346, "#F0EEFF", "#D9D5EF", 14)
     b += text(40, 39, "01 / GPU COMPILER ENGINEERING", 12, LAVENDER, mono=True, extra='letter-spacing="1.7"')
     b += text(40, 94, "OpenAssembler", 44, INK, 700, extra='letter-spacing="-1.5"')
-    b += text(1160, 38, "v0.3.0 / AMPERE sm_80", 12, MUTED, mono=True, extra='text-anchor="end"')
-    b += text(41, 125, "A native-first compiler with bounded research paths.", 17, MUTED)
+    b += text(1160, 38, "v0.3.0 / SM80 · A100", 12, MUTED, mono=True, extra='text-anchor="end"')
+    b += text(41, 125, "Native SASS, exact contracts, measured kernels.", 17, MUTED)
     nodes = [(40, 210, "INPUTS", "PTX / CUDA"), (284, 354, "CUSTOM BACKEND", "Select → allocate → schedule"), (672, 200, "TENSOR OPS", "GEMM / softmax / LN"), (906, 254, "HARDWARE", "NVIDIA SM80")]
     for x, w, label, sub in nodes:
         b += rect(x, 158, w, 73, WHITE, "#D9D5EF", 7)
@@ -101,15 +101,15 @@ def compiler():
         b += f'<path d="M{x2-7} 191l7 4-7 4" fill="none" stroke="{BLUE}"/>'
     b += line(40, 247, 1160, 247)
     metrics = [
-        (40, "0.3.0", "Current release", "Native-first compiler + research", LAVENDER),
-        (440, "4 workers", "Default native builds", "Bounded at eight · deterministic output", CORAL),
-        (840, "1–10%", "Experimental schedule deltas", "Five tested shapes · vs. prior OA", "#4D9DBD"),
+        (40, "0.3.0", "Current release", "Native SASS + cubin compiler", LAVENDER),
+        (440, "34 policies", "Exact dispatch", "42 contracts · 8 baseline retentions", CORAL),
+        (840, "1.03–2.46×", "OA baseline range", "Selected contracts · ptxas still leads", "#4D9DBD"),
     ]
     for x, value, label, sub, color in metrics:
         b += text(x, 287, value, 34, color, 700, extra='letter-spacing="-1.2"')
         b += text(x, 317, label, 14, INK)
         b += text(x, 336, sub, 11, MUTED)
-    wrap("openassembler.svg", "OpenAssembler v0.3.0 — GPU compiler engineering", "OpenAssembler v0.3.0 is a native-first NVIDIA SM80 compiler and research platform with bounded parallel native builds, tensor-kernel experiments, cooperative FP32 reductions, and explicit application workflows. Experimental schedule improvements are shape-specific and do not establish universal speedups.", 348, b)
+    wrap("openassembler.svg", "OpenAssembler v0.3.0 — native SM80 compiler", "OpenAssembler v0.3.0 is a native NVIDIA SM80/A100 SASS and cubin compiler with exact shape-aware dispatch, OA-owned model kernels, cooperative FP32 reductions, and measured optimization research. Results are contract-specific and do not establish universal speedups.", 348, b)
 
 
 def grand_tool():
